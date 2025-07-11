@@ -5,6 +5,7 @@ import * as path from 'path';
 
 export default defineConfig({
   plugins: [vike(), react()],
+  base: '/invoice/',
   build: {
     target: "es2022",
   },
