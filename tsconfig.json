@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "moduleDetection": "force",
+    "verbatimModuleSyntax": true,
+    "module": "ESNext",
+    "noEmit": true,
+    "moduleResolution": "Bundler",
+    "target": "ES2022",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "types": [
+      "vite/client",
+      "vike-react"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "paths": {
+      "#/*": ["./src/*"],
+      "#styled-system/*": ["./styled-system/*"]
+    },
+  },
+  "exclude": [
+    "dist"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "scripts": {
+    "prepare": "panda codegen",
+    "dev": "vike dev",
+    "build": "vike build",
+    "preview": "vike preview",
+    "tsc": "tsc"
+  },
+  "dependencies": {
+    "@react-pdf/renderer": "4.3.0",
+    "@vitejs/plugin-react": "4.6.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "vike": "0.4.235",
+    "vike-react": "0.6.4"
+  },
+  "devDependencies": {
+    "@pandacss/dev": "0.54.0",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "typescript": "5.8.3",
+    "vite": "6.3.5"
+  },
+  "overrides": {
+    "rollup": "npm:@rollup/wasm-node"
+  },
+  "type": "module"
+}
