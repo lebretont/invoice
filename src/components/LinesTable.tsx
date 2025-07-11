@@ -155,7 +155,6 @@ export function LinesTable({ lines, onUpdate }: LinesTableProps) {
                   <input
                     type="number"
                     min="0"
-                    step="0.01"
                     value={line.quantity}
                     onChange={(e) => updateLine(index, { quantity: parseFloat(e.target.value) || 0 })}
                     className={inputClass}

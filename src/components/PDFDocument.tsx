@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 12,
     marginBottom: 4,
   },
   companiesRow: {
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   table: {
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 5,
   },
   tableHeader: {
     flexDirection: 'row',
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   conditionsBlock: {
-    width: '55%',
+    width: '45%',
   },
   conditionsTitle: {
     fontWeight: 'bold',
@@ -250,10 +250,10 @@ export const PDFDocument = React.memo(function PDFDocument({ documentData }: PDF
             {documentData.type === 'quote' ? 'Devis' : 'Facture'}
           </Text>
           <Text style={styles.subtitle}>
-            Date du {documentData.type === 'quote' ? 'devis' : 'facture'} : {formatDate(documentData.date)}
+            Date : {formatDate(documentData.date)}
           </Text>
           <Text style={styles.subtitle}>
-            Référence du {documentData.type === 'quote' ? 'devis' : 'facture'} : {getDocumentNumber(documentData.type, documentData.number)}
+            Référence : {getDocumentNumber(documentData.type, documentData.number)}
           </Text>
           {documentData.type === 'quote' && documentData.expirationDate && (
             <Text style={styles.subtitle}>
@@ -311,12 +311,15 @@ export const PDFDocument = React.memo(function PDFDocument({ documentData }: PDF
         </View>
 
         <View style={styles.totalsSection}>
-          <View style={{ width: '60%' }}>
-            {documentData.vatRate === 0 && (
-              <Text style={styles.companyDetails}>TVA non applicable, art.293 B du CGI.</Text>
-            )}
-          </View>
+          <Text />
+
           <View style={styles.totalsTable}>
+            <View style={{ textAlign: 'right', color: 'grey', marginBottom: 5 }}>
+              {documentData.vatRate === 0 && (
+                <Text style={styles.companyDetails}>TVA non applicable, art.293 B du CGI.</Text>
+              )}
+            </View>
+
             <View style={styles.totalsRow}>
               <Text>Total HT</Text>
               <Text>{formatCurrency(documentData.subtotal)}</Text>
@@ -347,8 +350,8 @@ export const PDFDocument = React.memo(function PDFDocument({ documentData }: PDF
                 <Text style={styles.signatureTitle}>Bon pour accord</Text>
                 <Text style={styles.signatureText}>A ____________, le ___/___/_____</Text>
                 <Text style={styles.signatureText}> </Text>
-                <Text style={styles.signatureText}>Signature et cachet</Text>
-                <Text style={styles.signatureText}>Qualité de signataire</Text>
+                <Text style={{ ...styles.signatureText, marginBottom: 70 }}>Signature et cachet</Text>
+                <Text style={{ ...styles.signatureText, marginBottom: 15 }}>Qualité de signataire</Text>
               </View>
             </View>
             <Text style={styles.quoteDisclaimer}>

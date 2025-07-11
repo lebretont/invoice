@@ -193,7 +193,10 @@ export default function Page() {
       <main className={css({
         flex: 1,
         paddingTop: '4rem', // Espace pour header fixe
-        paddingBottom: '4rem', // Espace pour footer fixe
+        paddingBottom: '4rem',
+        mdDown: {
+          paddingBottom: '4.5rem'
+        },
         overflow: 'hidden',
         minHeight: 0 // Force flex shrinking
       })}>
@@ -209,7 +212,9 @@ export default function Page() {
             gap: '2rem',
             height: '100%',
             mdDown: {
-              gridTemplateColumns: '1fr'
+              gridTemplateColumns: '1fr',
+              gridTemplateRows: '1fr min-content',
+              gap: '1rem'
             }
           })}>
             <div className={css({
@@ -235,7 +240,10 @@ export default function Page() {
             <div className={css({
               overflow: 'hidden',
               display: 'flex',
-              flexDirection: 'column'
+              flexDirection: 'column',
+              mdDown: {
+                minHeight: '40vh'
+              }
             })}>
               <div className={css({
                 overflowY: 'auto',
@@ -260,7 +268,12 @@ export default function Page() {
         borderTop: '1px solid #e5e7eb',
         padding: '1rem',
         boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
-        height: '4rem' // Hauteur fixe
+        height: '4rem',
+        mdDown: {
+          padding: '0.75rem',
+          height: 'auto',
+          minHeight: '3.5rem'
+        }
       })}>
         <div className={css({
           maxWidth: '1400px',
@@ -268,7 +281,11 @@ export default function Page() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '1rem'
+          gap: '1rem',
+          mdDown: {
+            flexWrap: 'wrap',
+            gap: '0.5rem'
+          }
         })}>
           <button
             onClick={toggleDocumentType}
@@ -281,6 +298,10 @@ export default function Page() {
               cursor: 'pointer',
               _hover: {
                 backgroundColor: documentData.type === 'quote' ? '#2563eb' : '#059669'
+              },
+              mdDown: {
+                padding: '0.4rem 0.8rem',
+                fontSize: 'sm'
               }
             })}
           >
@@ -298,6 +319,10 @@ export default function Page() {
               cursor: 'pointer',
               _hover: {
                 backgroundColor: '#4b5563'
+              },
+              mdDown: {
+                padding: '0.4rem 0.8rem',
+                fontSize: 'sm'
               }
             })}
           >
