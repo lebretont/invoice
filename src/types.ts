@@ -49,6 +49,7 @@ export interface DocumentData {
   bankName?: string;
   iban?: string;
   bic?: string;
+  paymentTerms?: string;
 }
 
 export interface DocumentTotals {

@@ -339,12 +339,14 @@ export const PDFDocument = React.memo(function PDFDocument({ documentData }: PDF
           <>
             <View style={styles.quoteConditions} wrap={false}>
               <View style={styles.conditionsBlock}>
-                <Text style={styles.conditionsTitle}>Conditions de règlement</Text>
-                <Text style={styles.conditionsText}>Un acompte de 30 % est exigible à la signature du devis.</Text>
-                <Text style={styles.conditionsText}>Le solde sera dû à la livraison.</Text>
-                <Text style={styles.conditionsText}>
-                  En cas de retard de paiement, des pénalités seront appliquées conformément aux Conditions Générales de Vente.
-                </Text>
+                {documentData.paymentTerms && (
+                  <>
+                    <Text style={styles.conditionsTitle}>Conditions de règlement</Text>
+                    {documentData.paymentTerms.split('\n').map((line, index) => (
+                      <Text key={index} style={styles.conditionsText}>{line}</Text>
+                    ))}
+                  </>
+                )}
               </View>
               <View style={styles.signatureBlock}>
                 <Text style={styles.signatureTitle}>Bon pour accord</Text>

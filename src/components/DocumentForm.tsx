@@ -394,6 +394,34 @@ export function DocumentForm({ documentData, onUpdate }: DocumentFormProps) {
         />
       </div>
 
+      {documentData.type === 'quote' && (
+        <div className={css({ marginBottom: '1rem' })}>
+          <label className={labelClass}>
+            Conditions de règlement
+          </label>
+          <textarea
+            value={documentData.paymentTerms || ''}
+            onChange={(e) => onUpdate({ paymentTerms: e.target.value })}
+            rows={4}
+            className={css({
+              width: '100%',
+              padding: '0.5rem',
+              border: '1px solid',
+              borderColor: '#d1d5db',
+              borderRadius: 'md',
+              fontSize: 'sm',
+              resize: 'vertical',
+              _focus: {
+                outline: 'none',
+                borderColor: '#3b82f6',
+                boxShadow: '0 0 0 1px rgb(59 130 246)'
+              }
+            })}
+            placeholder="Conditions de règlement (laisser vide pour ne pas afficher)"
+          />
+        </div>
+      )}
+
       <div>
         <label className={labelClass}>
           Notes

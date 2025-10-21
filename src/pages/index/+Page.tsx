@@ -56,7 +56,8 @@ export default function Page() {
     notes: '',
     bankName: '',
     iban: '',
-    bic: ''
+    bic: '',
+    paymentTerms: 'Un acompte de 30 % est exigible à la signature du devis.\nLe solde sera dû à la livraison.\nEn cas de retard de paiement, des pénalités seront appliquées conformément aux Conditions Générales de Vente.'
   });
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -82,7 +83,8 @@ export default function Page() {
         notes: saved.notes || '',
         bankName: saved.bankName || '',
         iban: saved.iban || '',
-        bic: saved.bic || ''
+        bic: saved.bic || '',
+        paymentTerms: saved.paymentTerms !== undefined ? saved.paymentTerms : 'Un acompte de 30 % est exigible à la signature du devis.\nLe solde sera dû à la livraison.\nEn cas de retard de paiement, des pénalités seront appliquées conformément aux Conditions Générales de Vente.'
       };
       setDocumentData(mergedData);
     }
@@ -148,7 +150,8 @@ export default function Page() {
       notes: '',
       bankName: '',
       iban: '',
-      bic: ''
+      bic: '',
+      paymentTerms: documentData.type === 'quote' ? 'Un acompte de 30 % est exigible à la signature du devis.\nLe solde sera dû à la livraison.\nEn cas de retard de paiement, des pénalités seront appliquées conformément aux Conditions Générales de Vente.' : ''
     };
     setDocumentData(newData);
   }, [documentData.type]);
