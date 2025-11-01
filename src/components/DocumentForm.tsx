@@ -47,6 +47,22 @@ export function DocumentForm({ documentData, onUpdate }: DocumentFormProps) {
     });
   };
 
+  const handleDueDaysChange = (days: number | null) => {
+    if (!days || days <= 0) {
+      onUpdate({
+        dueDays: undefined,
+        dueDate: ''
+      });
+      return;
+    }
+
+    const dueDate = calculateExpirationDate(documentData.date, days);
+    onUpdate({
+      dueDays: days,
+      dueDate
+    });
+  };
+
   return (
     <div className={vstack({ alignItems: 'stretch', gap: '0' })}>
       <CollapsibleSection title="Informations générales" defaultExpanded={false}>
@@ -69,21 +85,119 @@ export function DocumentForm({ documentData, onUpdate }: DocumentFormProps) {
             <input
               type="date"
               value={documentData.date}
-              onChange={(e) => onUpdate({ date: e.target.value })}
+              onChange={(e) => {
+                const newDate = e.target.value;
+                const updates: Partial<DocumentData> = { date: newDate };
+
+                if (documentData.type === 'quote' && documentData.expirationDays) {
+                  updates.expirationDate = calculateExpirationDate(newDate, documentData.expirationDays);
+                }
+
+                if (documentData.type === 'invoice' && documentData.dueDays && documentData.dueDays > 0) {
+                  updates.dueDate = calculateExpirationDate(newDate, documentData.dueDays);
+                }
+
+                onUpdate(updates);
+              }}
               className={inputClass}
             />
           </div>
           {documentData.type === 'invoice' && (
-            <div>
+            <div className={css({ gridColumn: 'span 2' })}>
               <label className={labelClass}>
-                Date d'échéance
+                Échéance
               </label>
-              <input
-                type="date"
-                value={documentData.dueDate || ''}
-                onChange={(e) => onUpdate({ dueDate: e.target.value })}
-                className={inputClass}
-              />
+              <div className={css({
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+                marginTop: '0.5rem'
+              })}>
+                <label className={css({
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  cursor: 'pointer'
+                })}>
+                  <input
+                    type="radio"
+                    name="dueDays"
+                    value="30"
+                    checked={documentData.dueDays === 30}
+                    onChange={() => handleDueDaysChange(30)}
+                  />
+                  <span>30 jours</span>
+                </label>
+                <div className={css({
+                  display: 'flex',
+                  gap: '0.75rem',
+                  flexWrap: 'wrap',
+                  alignItems: 'center'
+                })}>
+                  <label className={css({
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    cursor: 'pointer'
+                  })}>
+                    <input
+                      type="radio"
+                      name="dueDays"
+                      value="custom"
+                      checked={documentData.dueDays !== 30}
+                      onChange={() => {
+                        if (documentData.dueDays === 30) {
+                          onUpdate({
+                            dueDays: undefined,
+                            dueDate: ''
+                          });
+                        }
+                      }}
+                    />
+                    <span>Personnalisé</span>
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="Nombre de jours"
+                    value={documentData.dueDays !== undefined && documentData.dueDays !== 30 ? documentData.dueDays : ''}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value, 10);
+                      if (Number.isNaN(value)) {
+                        onUpdate({
+                          dueDays: undefined,
+                          dueDate: ''
+                        });
+                        return;
+                      }
+                      handleDueDaysChange(value);
+                    }}
+                    className={css({
+                      width: '8rem',
+                      padding: '0.5rem',
+                      border: '1px solid',
+                      borderColor: '#d1d5db',
+                      borderRadius: 'md',
+                      fontSize: 'sm',
+                      _focus: {
+                        outline: 'none',
+                        borderColor: '#3b82f6',
+                        boxShadow: '0 0 0 1px rgb(59 130 246)'
+                      }
+                    })}
+                    disabled={documentData.dueDays === 30}
+                  />
+                </div>
+              </div>
+              {documentData.dueDate && (
+                <div className={css({
+                  marginTop: '0.5rem',
+                  fontSize: 'sm',
+                  color: '#6b7280'
+                })}>
+                  Échéance : {new Date(documentData.dueDate).toLocaleDateString('fr-FR')}
+                </div>
+              )}
             </div>
           )}
           {documentData.type === 'quote' && (
@@ -329,6 +443,32 @@ export function DocumentForm({ documentData, onUpdate }: DocumentFormProps) {
               value={documentData.client.phone}
               onChange={(e) => onUpdate({
                 client: { ...documentData.client, phone: e.target.value }
+              })}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>
+              SIRET
+            </label>
+            <input
+              type="text"
+              value={documentData.client.siret}
+              onChange={(e) => onUpdate({
+                client: { ...documentData.client, siret: e.target.value }
+              })}
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>
+              N° TVA
+            </label>
+            <input
+              type="text"
+              value={documentData.client.vatNumber}
+              onChange={(e) => onUpdate({
+                client: { ...documentData.client, vatNumber: e.target.value }
               })}
               className={inputClass}
             />

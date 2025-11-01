@@ -1,4 +1,4 @@
-import type { DocumentLine, DocumentTotals, ExpirationDays } from './types';
+import type { DocumentLine, DocumentTotals } from './types';
 
 
 export const calculateDocumentTotals = (lines: DocumentLine[], vatRate: number): DocumentTotals => {
@@ -31,7 +31,8 @@ export const getDocumentNumber = (type: 'quote' | 'invoice', number: number): st
   const prefix = type === 'quote' ? 'D' : 'F';
   const date = new Date();
   const year = date.getFullYear().toString();
-  return `${prefix}-${year}-${number}`;
+  const paddedNumber = number.toString().padStart(3, '0');
+  return `${prefix}-${year}-${paddedNumber}`;
 };
 
 export const saveToLocalStorage = (key: string, data: any): void => {
@@ -52,7 +53,7 @@ export const loadFromLocalStorage = <T>(key: string): T | null => {
   }
 };
 
-export const calculateExpirationDate = (baseDate: string, days: ExpirationDays): string => {
+export const calculateExpirationDate = (baseDate: string, days: number): string => {
   const date = new Date(baseDate);
   date.setDate(date.getDate() + days);
   return date.toISOString().split('T')[0];

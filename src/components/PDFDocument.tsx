@@ -80,23 +80,23 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   descriptionCell: {
-    width: '36%',
+    width: '48%'
   },
   quantityCell: {
     width: '12%',
-    textAlign: 'center',
+    textAlign: 'center'
   },
   priceCell: {
-    width: '18%',
-    textAlign: 'right',
+    width: '14%',
+    textAlign: 'right'
   },
   vatCell: {
     width: '12%',
-    textAlign: 'center',
+    textAlign: 'center'
   },
   totalCell: {
-    width: '22%',
-    textAlign: 'right',
+    width: '14%',
+    textAlign: 'right'
   },
   lineTitle: {
     fontWeight: 'bold',
@@ -296,6 +296,12 @@ export const PDFDocument = React.memo(function PDFDocument({ documentData }: PDF
                 {documentData.client.postalCode} {documentData.client.city}
               </Text>
             )}
+            {documentData.client.siret && (
+              <Text style={styles.companyDetails}>N° Siret : {documentData.client.siret}</Text>
+            )}
+            {documentData.client.vatNumber && (
+              <Text style={styles.companyDetails}>N° TVA intra. : {documentData.client.vatNumber}</Text>
+            )}
           </View>
         </View>
 
@@ -385,6 +391,7 @@ export const PDFDocument = React.memo(function PDFDocument({ documentData }: PDF
     prev.number === next.number &&
     prev.date === next.date &&
     prev.dueDate === next.dueDate &&
+    prev.dueDays === next.dueDays &&
     prev.expirationDate === next.expirationDate &&
     prev.vatRate === next.vatRate &&
     prev.subtotal === next.subtotal &&

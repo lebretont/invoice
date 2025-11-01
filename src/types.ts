@@ -26,6 +26,8 @@ export interface Client {
   postalCode: string;
   phone: string;
   email: string;
+  siret: string;
+  vatNumber: string;
 }
 
 export type ExpirationDays = 15 | 30 | 45;
@@ -36,6 +38,7 @@ export interface DocumentData {
   number: number;
   date: string;
   dueDate?: string;
+  dueDays?: number;
   expirationDate?: string;
   expirationDays?: ExpirationDays;
   company: Company;

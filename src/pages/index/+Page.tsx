@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { DocumentData, DocumentLine, Company, Client, ExpirationDays } from '../../types';
 import { ClientComponent } from '#/components/ClientComponent';
-import { loadFromLocalStorage, calculateDocumentTotals, saveToLocalStorage } from '#/utils';
+import { loadFromLocalStorage, calculateDocumentTotals, saveToLocalStorage, calculateExpirationDate } from '#/utils';
 import { css } from '#styled-system/css';
 import { DocumentForm } from '#/components/DocumentForm';
 import { SmoothPDFViewer } from '#/components/SmoothPDFViewer';
@@ -24,7 +24,9 @@ const defaultClient: Client = {
   city: '',
   postalCode: '',
   phone: '',
-  email: ''
+  email: '',
+  siret: '',
+  vatNumber: ''
 };
 
 const defaultLine: DocumentLine = {
@@ -44,6 +46,7 @@ export default function Page() {
     number: 0,
     date: new Date().toISOString().split('T')[0],
     dueDate: '',
+    dueDays: undefined,
     expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     expirationDays: 30,
     company: defaultCompany,
@@ -86,7 +89,24 @@ export default function Page() {
         bic: saved.bic || '',
         paymentTerms: saved.paymentTerms !== undefined ? saved.paymentTerms : 'Un acompte de 30 % est exigible à la signature du devis.\nLe solde sera dû à la livraison.\nEn cas de retard de paiement, des pénalités seront appliquées conformément aux Conditions Générales de Vente.'
       };
-      setDocumentData(mergedData);
+      const adjustedData = mergedData.type === 'invoice'
+        ? (() => {
+            const invoiceDays = mergedData.dueDays && mergedData.dueDays > 0 ? mergedData.dueDays : 30;
+            return {
+              ...mergedData,
+              dueDays: invoiceDays,
+              dueDate: mergedData.dueDate || calculateExpirationDate(mergedData.date, invoiceDays)
+            };
+          })()
+        : (() => {
+            const quoteDays = (mergedData.expirationDays ?? 30) as ExpirationDays;
+            return {
+              ...mergedData,
+              expirationDays: quoteDays,
+              expirationDate: mergedData.expirationDate || calculateExpirationDate(mergedData.date, quoteDays)
+            };
+          })();
+      setDocumentData(adjustedData);
     }
     setIsLoaded(true);
   }, []);
@@ -118,28 +138,48 @@ export default function Page() {
   }, []);
 
   const toggleDocumentType = useCallback(() => {
-    const newType = documentData.type === 'quote' ? 'invoice' : 'quote'
-
+    const newType = documentData.type === 'quote' ? 'invoice' : 'quote';
     const newId = crypto.randomUUID();
 
+    if (newType === 'invoice') {
+      const invoiceDays = documentData.dueDays && documentData.dueDays > 0 ? documentData.dueDays : 30;
+      updateDocumentData({
+        id: newId,
+        type: newType,
+        dueDays: invoiceDays,
+        dueDate: calculateExpirationDate(documentData.date, invoiceDays),
+        expirationDate: '',
+        expirationDays: undefined
+      });
+      return;
+    }
+
+    const quoteDays = (documentData.expirationDays ?? 30) as ExpirationDays;
     updateDocumentData({
       id: newId,
       type: newType,
-      dueDate: newType === 'invoice' ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : '',
-      expirationDate: newType === 'quote' ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : '',
-      expirationDays: newType === 'quote' ? 30 : undefined
+      dueDate: '',
+      dueDays: undefined,
+      expirationDays: quoteDays,
+      expirationDate: calculateExpirationDate(documentData.date, quoteDays)
     });
-  }, [documentData.type]);
+  }, [documentData.date, documentData.dueDays, documentData.expirationDays, documentData.type, updateDocumentData]);
 
   const resetForm = useCallback(() => {
+    const baseDate = new Date().toISOString().split('T')[0];
+    const isInvoice = documentData.type === 'invoice';
+    const invoiceDays = isInvoice ? 30 : undefined;
+    const quoteDays = 30 as ExpirationDays;
+
     const newData = {
       id: crypto.randomUUID(),
       type: documentData.type,
       number: 0,
-      date: new Date().toISOString().split('T')[0],
-      dueDate: documentData.type === 'invoice' ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : '',
-      expirationDate: documentData.type === 'quote' ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : '',
-      expirationDays: documentData.type === 'quote' ? 30 as ExpirationDays : undefined,
+      date: baseDate,
+      dueDate: isInvoice && invoiceDays ? calculateExpirationDate(baseDate, invoiceDays) : '',
+      dueDays: invoiceDays,
+      expirationDate: !isInvoice ? calculateExpirationDate(baseDate, quoteDays) : '',
+      expirationDays: !isInvoice ? quoteDays : undefined,
       company: defaultCompany,
       client: defaultClient,
       lines: [{ ...defaultLine, id: crypto.randomUUID() }],
